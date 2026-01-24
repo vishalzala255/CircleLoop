@@ -33,9 +33,13 @@ export default function Navbar() {
                     fontWeight: 800,
                     fontSize: '1.6rem',
                     color: 'var(--primary)',
-                    letterSpacing: '-0.5px'
+                    letterSpacing: '-0.5px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.8rem'
                 }}>
-                    CircleLoop<span style={{ color: 'var(--accent)' }}>.</span>
+                    <img src="/logo.svg" alt="CircleLoop Logo" style={{ width: '32px', height: '32px' }} />
+                    <span>CircleLoop<span style={{ color: 'var(--accent)' }}>.</span></span>
                 </Link>
                 <div style={{ display: 'flex', gap: 'calc(0.5rem + 1vw)', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                     <Link href="/" className="nav-link" style={linkStyle(pathname === '/')}>Home</Link>

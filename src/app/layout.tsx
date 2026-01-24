@@ -17,8 +17,8 @@ export const metadata: Metadata = {
   title: "CircleLoop | Smart E-Waste Recycling",
   description: "Join the green revolution. The premier platform for community-driven e-waste recycling and electronics recovery.",
   icons: {
-    icon: "/favicon.png",
-    apple: "/logo.png",
+    icon: "/logo.svg",
+    apple: "/logo.svg",
   },
 };
 
