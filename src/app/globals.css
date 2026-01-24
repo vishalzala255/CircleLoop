@@ -298,6 +298,25 @@ textarea:focus {
     padding: 1.5rem !important;
   }
 
+  /* Navbar Mobile Fixes */
+  .navbar-brand {
+    font-size: 1.2rem !important;
+  }
+
+  .navbar-brand img {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .nav-link {
+    font-size: 0.85rem !important;
+  }
+
+  .btn-primary.navbar-btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem !important;
+  }
+
   .admin-portal-header {
     flex-direction: column;
     align-items: flex-start !important;

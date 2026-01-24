@@ -63,7 +63,7 @@ export default function Navbar() {
                                     fontWeight: 600,
                                     fontSize: '0.9rem',
                                     transition: 'transform 0.2s',
-                                }} className="btn-primary">
+                                }} className="btn-primary navbar-btn">
                                     Dashboard
                                 </Link>
                             </>
@@ -78,7 +78,7 @@ export default function Navbar() {
                                     fontWeight: 600,
                                     fontSize: '0.9rem',
                                     transition: 'transform 0.2s',
-                                }} className="btn-primary">
+                                }} className="btn-primary navbar-btn">
                                     Join Now
                                 </Link>
                             </>
