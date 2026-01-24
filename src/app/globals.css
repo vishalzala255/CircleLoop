@@ -1,0 +1,305 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Core Brand Colors */
+  --primary: #2d5016;
+  --primary-light: #528a2f;
+  --accent: #d96c34;
+
+  /* Theme: LIGHT (Default) */
+  --bg-body: #f9f8f4;
+  --bg-card: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --bg-hero-gradient: radial-gradient(circle at 80% 20%, rgba(45, 80, 22, 0.08) 0%, transparent 60%), linear-gradient(135deg, #fdfbf7 0%, #f4f1ea 100%);
+  --bg-section-alt: linear-gradient(135deg, #f8f7f4 0%, #e8e6e1 100%);
+  --text-main: #121212;
+  --text-secondary: #5c5c5c;
+  --text-muted: #888888;
+  --border-color: #e6e4dc;
+  --shadow-color: rgba(45, 80, 22, 0.08);
+
+  /* Functional Colors */
+  --error: #c1453d;
+  --success: #2d5016;
+  --btn-text: #ffffff;
+  --btn-hover-text: #ffffff;
+  --btn-outline-text: #2d5016;
+  /* New Semantic Vars for components */
+  --bg-impact-card: #2d5016;
+  /* Dark Green */
+  --text-impact-card: #ffffff;
+  --border-impact-card: transparent;
+}
+
+/* Dark Theme Overrides */
+[data-theme='dark'] {
+  --primary: #4ade80;
+  /* Brighter green for dark mode accessibility */
+  --primary-light: #22c55e;
+  --accent: #fb923c;
+  /* Brighter orange */
+
+  --bg-body: #0f172a;
+  /* Deep blue-gray/black */
+  --bg-card: #1e293b;
+  --bg-glass: rgba(30, 41, 59, 0.7);
+  --bg-hero-gradient: radial-gradient(circle at 80% 20%, rgba(74, 222, 128, 0.1) 0%, transparent 60%), linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --bg-section-alt: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  --text-main: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+
+  --btn-text: #0f172a;
+  /* Dark text on bright buttons */
+  --btn-hover-text: #0f172a;
+  --btn-outline-text: #4ade80;
+
+  /* Impact Card - Dark Mode: Dark card with green border */
+  --bg-impact-card: rgba(30, 41, 59, 0.6);
+  --text-impact-card: #f1f5f9;
+  --border-impact-card: #4ade80;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Sora', sans-serif;
+  color: var(--text-main);
+  background: var(--bg-body);
+  line-height: 1.7;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+  /* Headings adapt to theme */
+}
+
+/* Specific styling for primary-colored headings if needed */
+.text-primary {
+  color: var(--primary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+/* Utilities */
+.container-max {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@media (max-width: 768px) {
+  .container-max {
+    padding: 0 1.25rem;
+  }
+}
+
+/* Animations not changed... keeping them for brevity unless asked, but ensuring they are here */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-slide-up {
+  opacity: 0;
+  animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Components */
+.btn {
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  padding: 0.9rem 2.2rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--btn-text);
+  box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+  color: var(--btn-hover-text);
+  box-shadow: 0 10px 25px var(--shadow-color);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--btn-outline-text);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: var(--btn-text);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+.card-hover {
+  transition: all 0.4s ease;
+  background: var(--bg-card);
+  /* Ensure cards use theme bg */
+  border: 1px solid var(--border-color);
+  /* Subtle border for definition */
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -5px var(--shadow-color);
+  border-color: var(--primary);
+}
+
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-family: 'Sora', sans-serif;
+  font-size: 1rem;
+  background: var(--bg-card);
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .hero {
+    padding: 3rem 1rem !important;
+    min-height: auto !important;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 0.8rem 1.5rem;
+  }
+
+  h1 {
+    font-size: 2.2rem !important;
+    line-height: 1.2 !important;
+  }
+
+  h2 {
+    font-size: 1.8rem !important;
+  }
+
+  .glass-card {
+    padding: 1.5rem !important;
+  }
+
+  .admin-portal-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+}
+
+/* Fix for horizontal scroll on some tables */
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+}
