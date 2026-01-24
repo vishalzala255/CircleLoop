@@ -78,6 +78,8 @@ body {
   background: var(--bg-body);
   line-height: 1.7;
   overflow-x: hidden;
+  position: relative;
+  width: 100%;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -114,7 +116,13 @@ a {
 
 @media (max-width: 768px) {
   .container-max {
-    padding: 0 1.25rem;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container-max {
+    padding: 0 0.75rem;
   }
 }
 

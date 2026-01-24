@@ -25,8 +25,8 @@ export default function Home() {
 
         <div className="container-max" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '5rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 'clamp(1.5rem, 5vw, 5rem)',
           alignItems: 'center',
           width: '100%',
           zIndex: 2
@@ -39,7 +39,7 @@ export default function Home() {
             </div>
 
             <h1 className="animate-slide-up" style={{
-              fontSize: 'clamp(2.5rem, 5vw, 4.2rem)',
+              fontSize: 'clamp(2.2rem, 5vw, 4.2rem)',
               lineHeight: 1.15,
               marginBottom: '1.5rem',
               animationDelay: '0.2s',
@@ -50,7 +50,7 @@ export default function Home() {
             </h1>
 
             <p className="animate-slide-up" style={{
-              fontSize: '1.2rem',
+              fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
               color: 'var(--text-secondary)',
               marginBottom: '2.5rem',
               maxWidth: '550px',
@@ -76,7 +76,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="animate-float" style={{ position: 'relative' }}>
+          <div className="animate-float" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto' }}>
             {/* Decorative Image Frame */}
             <div style={{
               position: 'relative',
@@ -95,14 +95,16 @@ export default function Home() {
               {/* Floating Badge */}
               <div className="glass-card" style={{
                 position: 'absolute',
-                bottom: '30px',
-                left: '-20px',
-                padding: '1rem 1.5rem',
+                bottom: '20px',
+                left: '10px',
+                right: '10px',
+                padding: '0.75rem 1rem',
                 transform: 'rotate(2deg)',
-                boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+                boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+                textAlign: 'center'
               }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Weekly Impact</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--success)' }}>+2,403 kg collected</div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Weekly Impact</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--success)' }}>+2,403 kg collected</div>
               </div>
             </div>
           </div>
@@ -110,14 +112,14 @@ export default function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="process" style={{ padding: '8rem 2rem', background: 'var(--bg-body)' }}>
+      <section id="process" style={{ padding: 'clamp(4rem, 10vw, 8rem) 1rem', background: 'var(--bg-body)' }}>
         <div className="container-max">
           <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 4rem' }}>
-            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Simple Steps to Sustainability</h2>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', marginBottom: '1rem' }}>Simple Steps to Sustainability</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>We've optimized the process to make recycling as easy as ordering a pizza.</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
             <Step number="01" title="Schedule Pickup" desc="Log in, upload a photo, and schedule a pickup at your convenience." delay="0s" />
             <Step number="02" title="We Collect" desc="Our verified logistics partners arrive at your doorstep to collect the items." delay="0.1s" />
             <Step number="03" title="Assessment" desc="Items are verified for their condition and materials are categorized." delay="0.2s" />
@@ -127,13 +129,13 @@ export default function Home() {
       </section>
 
       {/* IMPACT SECTION */}
-      <section style={{ padding: '8rem 2rem', background: 'var(--bg-section-alt)', position: 'relative' }}>
+      <section style={{ padding: 'clamp(4rem, 10vw, 8rem) 1rem', background: 'var(--bg-section-alt)', position: 'relative' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100px', background: 'linear-gradient(to bottom, var(--bg-body), transparent)' }} />
 
         <div className="container-max">
-          <h2 style={{ textAlign: 'center', marginBottom: '4rem', fontSize: '2.5rem' }}>Why It Matters</h2>
+          <h2 style={{ textAlign: 'center', marginBottom: '4rem', fontSize: 'clamp(1.8rem, 5vw, 2.5rem)' }}>Why It Matters</h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '3rem', marginBottom: '5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '5rem' }}>
             <ImpactCard
               image="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&h=600&fit=crop"
               title="Green Jobs Creation"
@@ -150,7 +152,7 @@ export default function Home() {
             background: 'var(--bg-impact-card)',
             border: '2px solid var(--border-impact-card)',
             borderRadius: '24px',
-            padding: '4rem 2rem',
+            padding: 'clamp(2rem, 5vw, 4rem) 1.5rem',
             color: 'var(--text-impact-card)',
             textAlign: 'center',
             backgroundImage: 'url("https://www.transparenttextures.com/patterns/cubes.png")', // Subtle texture pattern
@@ -161,19 +163,19 @@ export default function Home() {
             {/* Glow effect for dark mode */}
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'var(--primary)', opacity: 0.1, pointerEvents: 'none' }}></div>
 
-            <h2 style={{ color: 'var(--text-impact-card)', marginBottom: '3rem', position: 'relative' }}>Our Collective Impact</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem', position: 'relative' }}>
-              <div className="card-hover" style={{ borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)' }}>
-                <div style={{ fontSize: '3.5rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-impact-card)' }}>53.6<span style={{ fontSize: '2rem', color: 'var(--primary)' }}>M</span></div>
-                <div style={{ opacity: 0.9, color: 'var(--text-impact-card)' }}>Tons E-Waste/Year</div>
+            <h2 style={{ color: 'var(--text-impact-card)', marginBottom: '3rem', position: 'relative', fontSize: 'clamp(1.6rem, 4vw, 2.22rem)' }}>Our Collective Impact</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '2rem', position: 'relative' }}>
+              <div className="card-hover" style={{ borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', padding: '1.5rem' }}>
+                <div style={{ fontSize: 'clamp(2.5rem, 8vw, 3.5rem)', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-impact-card)' }}>53.6<span style={{ fontSize: '1.5rem', color: 'var(--primary)' }}>M</span></div>
+                <div style={{ opacity: 0.9, color: 'var(--text-impact-card)', fontSize: '0.9rem' }}>Tons E-Waste/Year</div>
               </div>
-              <div className="card-hover" style={{ borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)' }}>
-                <div style={{ fontSize: '3.5rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-impact-card)' }}>17.4<span style={{ fontSize: '2rem', color: 'var(--primary)' }}>%</span></div>
-                <div style={{ opacity: 0.9, color: 'var(--text-impact-card)' }}>Currently Recycled</div>
+              <div className="card-hover" style={{ borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', padding: '1.5rem' }}>
+                <div style={{ fontSize: 'clamp(2.5rem, 8vw, 3.5rem)', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-impact-card)' }}>17.4<span style={{ fontSize: '1.5rem', color: 'var(--primary)' }}>%</span></div>
+                <div style={{ opacity: 0.9, color: 'var(--text-impact-card)', fontSize: '0.9rem' }}>Currently Recycled</div>
               </div>
-              <div className="card-hover" style={{ borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)' }}>
-                <div style={{ fontSize: '3.5rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-impact-card)' }}>$57<span style={{ fontSize: '2rem', color: 'var(--primary)' }}>B</span></div>
-                <div style={{ opacity: 0.9, color: 'var(--text-impact-card)' }}>Lost Raw Material Value</div>
+              <div className="card-hover" style={{ borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', padding: '1.5rem' }}>
+                <div style={{ fontSize: 'clamp(2.5rem, 8vw, 3.5rem)', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-impact-card)' }}>$57<span style={{ fontSize: '1.5rem', color: 'var(--primary)' }}>B</span></div>
+                <div style={{ opacity: 0.9, color: 'var(--text-impact-card)', fontSize: '0.9rem' }}>Lost Raw Material Value</div>
               </div>
             </div>
           </div>
@@ -181,14 +183,14 @@ export default function Home() {
       </section>
 
       {/* CONTACT SECTION */}
-      <section id="contact" style={{ padding: '8rem 2rem', background: 'var(--bg-body)' }}>
+      <section id="contact" style={{ padding: 'clamp(4rem, 10vw, 8rem) 1rem', background: 'var(--bg-body)' }}>
         <div className="container-max">
           <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto 4rem' }}>
-            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Get In Touch</h2>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', marginBottom: '1rem' }}>Get In Touch</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Have questions? We are here to help you navigate your recycling journey.</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
             <ContactCard icon={<Icon name="phone" size={28} />} title="Call Us" desc="Mon-Fri, 9AM-6PM" link="+91 987-654-3210" href="tel:+919876543210" />
             <ContactCard icon={<Icon name="mail" size={28} />} title="Email Us" desc="24/7 Support" link="support@circleloop.com" href="mailto:support@circleloop.com" />
             <ContactCard icon={<Icon name="home" size={28} />} title="Visit Us" desc="Mumbai, Maharashtra" link="123 Green Street, Eco Park" />
