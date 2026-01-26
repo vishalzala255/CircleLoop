@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
@@ -15,33 +15,35 @@ export default function AdminDashboard() {
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({ fullName: "", email: "", password: "", role: "customer" });
     const [creating, setCreating] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true);
 
     // Fetch Stats & Users on Load
+    const fetchData = useCallback(async () => {
+        try {
+            // Parallel fetch for better performance
+            const [usersCount, companiesCount, requestsCount, profiles] = await Promise.all([
+                supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'customer'),
+                supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'company'),
+                supabase.from('pickup_requests').select('*', { count: 'exact', head: true }),
+                supabase.from('profiles').select('*').order('created_at', { ascending: false })
+            ]);
+
+            setStats({
+                users: usersCount.count || 0,
+                companies: companiesCount.count || 0,
+                requests: requestsCount.count || 0
+            });
+
+            if (profiles.data) setUserList(profiles.data);
+        } finally {
+            setInitialLoad(false);
+        }
+    }, []);
+
     useEffect(() => {
         if (!user) return;
         fetchData();
-    }, [user]);
-
-    const fetchData = async () => {
-        // 1. Fetch Stats (Counts)
-        const { count: usersCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'customer');
-        const { count: companiesCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'company');
-        const { count: requestsCount } = await supabase.from('pickup_requests').select('*', { count: 'exact', head: true });
-
-        setStats({
-            users: usersCount || 0,
-            companies: companiesCount || 0,
-            requests: requestsCount || 0
-        });
-
-        // 2. Fetch User List (Profiles)
-        const { data: profiles } = await supabase
-            .from('profiles')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        if (profiles) setUserList(profiles);
-    };
+    }, [user, fetchData]);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -99,7 +101,38 @@ export default function AdminDashboard() {
         }
     };
 
-    if (loading || !user) return <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-main)' }}>Loading System...</div>;
+    if (loading || !user) return (
+        <div style={{ 
+            minHeight: '100vh', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            background: 'var(--bg-body)',
+            color: 'var(--text-main)',
+            fontSize: '1.2rem'
+        }}>
+            <div style={{ textAlign: 'center' }}>
+                <div style={{ marginBottom: '1rem', fontSize: '2rem' }}>⚙️</div>
+                <div>Loading System...</div>
+            </div>
+        </div>
+    );
+
+    if (initialLoad) return (
+        <div style={{ 
+            minHeight: '100vh', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            background: 'var(--bg-body)',
+            color: 'var(--text-main)'
+        }}>
+            <div style={{ textAlign: 'center' }}>
+                <div style={{ marginBottom: '1rem', fontSize: '2rem' }}>📊</div>
+                <div>Loading dashboard...</div>
+            </div>
+        </div>
+    );
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-body)', display: 'flex', flexDirection: 'column' }}>
@@ -156,6 +189,9 @@ export default function AdminDashboard() {
                         </Link>
                         <Link href="/admin/inventory" className="btn btn-primary" style={{ padding: '0.7rem 1.5rem', fontSize: '0.9rem', textDecoration: 'none', borderRadius: '50px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <Icon name="box" size={16} /> Inventory Management
+                        </Link>
+                        <Link href="/admin/messages" className="btn btn-outline" style={{ padding: '0.7rem 1.5rem', fontSize: '0.9rem', textDecoration: 'none', borderRadius: '50px', display: 'flex', alignItems: 'center', gap: '0.5rem', borderColor: 'var(--primary)', color: 'var(--primary)' }}>
+                            <Icon name="mail" size={16} /> Contact Messages
                         </Link>
                         <button className="btn btn-outline" style={{ padding: '0.7rem 1.5rem', fontSize: '0.9rem', borderRadius: '50px', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={fetchData}>
                             <Icon name="refresh" size={16} /> Refresh Data

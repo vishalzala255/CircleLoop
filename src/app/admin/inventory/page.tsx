@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -13,21 +13,30 @@ export default function AdminInventory() {
     const [stock, setStock] = useState<any[]>([]);
     const [tab, setTab] = useState("requests");
     const [submitting, setSubmitting] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true);
 
     // Fetch & Subscribe
-    const fetchData = async () => {
-        const { data: reqData } = await supabase
-            .from('pickup_requests')
-            .select('*, profiles:user_id ( full_name, email )')
-            .order('created_at', { ascending: false });
-        if (reqData) setRequests(reqData);
+    const fetchData = useCallback(async () => {
+        try {
+            const [reqResponse, invResponse] = await Promise.all([
+                supabase
+                    .from('pickup_requests')
+                    .select('*, profiles:user_id ( full_name, email )')
+                    .order('created_at', { ascending: false }),
+                supabase
+                    .from('inventory')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+            ]);
 
-        const { data: invData } = await supabase
-            .from('inventory')
-            .select('*')
-            .order('created_at', { ascending: false });
-        if (invData) setStock(invData);
-    };
+            if (reqResponse.data) setRequests(reqResponse.data);
+            if (invResponse.data) setStock(invResponse.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setInitialLoad(false);
+        }
+    }, []);
 
     useEffect(() => {
         if (!user) return;
@@ -40,38 +49,60 @@ export default function AdminInventory() {
             .subscribe();
 
         return () => { supabase.removeChannel(channel); };
-    }, [user]);
+    }, [user, fetchData]);
 
     const handleStatusUpdate = async (id: string, newStatus: string, item: any) => {
-        // 1. Update Status
-        const { error } = await supabase
-            .from('pickup_requests')
-            .update({ status: newStatus })
-            .eq('id', id);
+        setSubmitting(true);
+        
+        try {
+            // 1. Update Status
+            const { error } = await supabase
+                .from('pickup_requests')
+                .update({ status: newStatus })
+                .eq('id', id);
 
-        if (error) {
-            alert("Update failed: " + error.message);
-            return;
-        }
+            if (error) {
+                alert("Update failed: " + error.message);
+                return;
+            }
 
-        // 2. Log History (Legacy Audit Log)
-        await supabase.from('request_status_history').insert({
-            pickup_request_id: Number(id),
-            status: newStatus,
-            updated_by: 'admin'
-        });
+            // 2. Log History (Legacy Audit Log)
+            await supabase.from('request_status_history').insert({
+                pickup_request_id: Number(id),
+                status: newStatus,
+                updated_by: 'admin'
+            });
 
-        // 3. Auto-Migrate to Inventory (Legacy: IF 'Collected')
-        if (newStatus === "Collected") {
-            const { error: invError } = await supabase
-                .from('inventory')
-                .insert({
+            // 3. Auto-Migrate to Inventory (Legacy: IF 'Collected')
+            if (newStatus === "Collected") {
+                const { error: invError } = await supabase
+                    .from('inventory')
+                    .insert({
+                        item_name: item.ewaste_type || "Collected Item",
+                        qty: Number(item.qty) || 1,
+                        price_per_unit: 0,
+                        source_request_id: Number(id)
+                    });
+                if (invError) {
+                    console.error("Inventory Sync Error:", invError);
+                    alert("Item collected but failed to add to inventory: " + invError.message);
+                }
+            }
+            
+            // Immediate local state update for better UX
+            setRequests(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
+            if (newStatus === "Collected") {
+                setStock(prev => [...prev, {
+                    id: Date.now().toString(),
                     item_name: item.ewaste_type || "Collected Item",
                     qty: Number(item.qty) || 1,
                     price_per_unit: 0,
-                    source_request_id: Number(id)
-                });
-            if (invError) console.error("Inventory Sync Error:", invError);
+                    source_request_id: Number(id),
+                    created_at: new Date().toISOString()
+                }]);
+            }
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -83,16 +114,34 @@ export default function AdminInventory() {
         const p = (form.elements.namedItem('price') as HTMLInputElement).value;
 
         setSubmitting(true);
-        const { error } = await supabase.from('inventory').insert({
-            item_name: name,
-            qty: Number(q),
-            price_per_unit: Number(p),
-            source_request_id: null // Manual entry
-        });
+        try {
+            const newItem = {
+                item_name: name,
+                qty: Number(q),
+                price_per_unit: Number(p),
+                source_request_id: null // Manual entry
+            };
+            
+            const { data, error } = await supabase
+                .from('inventory')
+                .insert(newItem)
+                .select()
+                .single();
 
-        if (error) alert("Add failed: " + error.message);
-        else form.reset();
-        setSubmitting(false);
+            if (error) {
+                alert("Add failed: " + error.message);
+                return;
+            }
+            
+            // Immediate local state update
+            if (data) {
+                setStock(prev => [data, ...prev]);
+            }
+            
+            form.reset();
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const handleUpdatePrice = async (invId: string, price: number) => {
@@ -112,7 +161,38 @@ export default function AdminInventory() {
         else fetchData();
     };
 
-    if (loading || !user) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Inventory...</div>;
+    if (loading || !user) return (
+        <div style={{ 
+            minHeight: '100vh', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            background: 'var(--bg-body)',
+            color: 'var(--text-main)',
+            fontSize: '1.2rem'
+        }}>
+            <div style={{ textAlign: 'center' }}>
+                <div style={{ marginBottom: '1rem', fontSize: '2rem' }}>⏳</div>
+                <div>Loading Inventory...</div>
+            </div>
+        </div>
+    );
+
+    if (initialLoad) return (
+        <div style={{ 
+            minHeight: '100vh', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            background: 'var(--bg-body)',
+            color: 'var(--text-main)'
+        }}>
+            <div style={{ textAlign: 'center' }}>
+                <div style={{ marginBottom: '1rem', fontSize: '2rem' }}>📦</div>
+                <div>Loading data...</div>
+            </div>
+        </div>
+    );
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-body)', display: 'flex', flexDirection: 'column' }}>
@@ -199,23 +279,23 @@ export default function AdminInventory() {
                         </div>
                     </div>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
                         {/* Manual Add Form */}
-                        <div className="glass-card" style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--border-color)', height: 'fit-content' }}>
+                        <div className="glass-card" style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--border-color)', maxWidth: '500px' }}>
                             <h4 style={{ marginBottom: '1.5rem', color: 'var(--primary)' }}>Add Manual Item</h4>
                             <form onSubmit={handleManualAdd} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 <div>
                                     <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Item Name</label>
-                                    <input name="item_name" required placeholder="e.g. Broken Laptop" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
+                                    <input name="item_name" required placeholder="e.g. Fridge, TV, Laptop" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
                                 </div>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                     <div>
                                         <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Quantity</label>
-                                        <input name="qty" type="number" required min="1" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
+                                        <input name="qty" type="number" required min="1" defaultValue="1" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
                                     </div>
                                     <div>
                                         <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Price (₹)</label>
-                                        <input name="price" type="number" required min="0" step="0.01" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
+                                        <input name="price" type="number" required min="0" step="0.01" defaultValue="0" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
                                     </div>
                                 </div>
                                 <button type="submit" disabled={submitting} className="btn btn-primary" style={{ marginTop: '1rem' }}>
@@ -224,10 +304,10 @@ export default function AdminInventory() {
                             </form>
                         </div>
 
-                        {/* Stock Table */}
-                        <div className="glass-card" style={{ background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
-                            <div className="table-container">
-                                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+                        {/* Stock Table - Full Width */}
+                        <div className="glass-card" style={{ background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border-color)', overflow: 'auto', width: '100%' }}>
+                            <div style={{ overflowX: 'auto', width: '100%' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '800px' }}>
                                     <thead>
                                         <tr style={{ background: 'var(--bg-section-alt)', borderBottom: '1px solid var(--border-color)' }}>
                                             <th style={thStyle}>No.</th>
@@ -239,11 +319,11 @@ export default function AdminInventory() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {stock.length === 0 && <tr><td colSpan={6} style={{ padding: '2rem', textAlign: 'center' }}>No priced items in stock.</td></tr>}
+                                        {stock.length === 0 && <tr><td colSpan={6} style={{ padding: '2rem', textAlign: 'center' }}>No items in stock.</td></tr>}
                                         {stock.map((s, index) => (
                                             <tr key={s.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                                                 <td style={tdStyle}>{index + 1}</td>
-                                                <td style={tdStyle}>{s.item_name}</td>
+                                                <td style={tdStyle}><strong>{s.item_name}</strong></td>
                                                 <td style={tdStyle}>
                                                     <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', background: s.source_request_id ? 'rgba(37, 99, 235, 0.1)' : 'rgba(156, 163, 175, 0.1)', color: s.source_request_id ? '#2563eb' : 'var(--text-secondary)' }}>
                                                         {s.source_request_id ? 'Auto' : 'Manual'}

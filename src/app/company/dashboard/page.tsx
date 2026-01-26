@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
@@ -10,11 +10,12 @@ export default function CompanyDashboard() {
     const { user, loading } = useAuth(true);
     const router = useRouter();
     const [stats, setStats] = useState({ available: 0, my_orders: 0 });
+    const [initialLoad, setInitialLoad] = useState(true);
 
-    useEffect(() => {
+    const checkRoleAndFetchStats = useCallback(async () => {
         if (!user) return;
-
-        const checkRoleAndFetchStats = async () => {
+        
+        try {
             // 1. Verify Role
             const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
             if (profile?.role !== 'company') {
@@ -22,23 +23,23 @@ export default function CompanyDashboard() {
                 return;
             }
 
-            // 1. Available Stock
-            const { count: stockCount } = await supabase
-                .from('inventory')
-                .select('*', { count: 'exact', head: true })
-                .gt('qty', 0);
-
-            // 2. My Orders
-            const { count: orderCount } = await supabase
-                .from('company_orders')
-                .select('*', { count: 'exact', head: true })
-                .eq('company_id', user.id);
+            // Parallel fetch for performance
+            const [stockCount, orderCount] = await Promise.all([
+                supabase.from('inventory').select('*', { count: 'exact', head: true }).gt('qty', 0),
+                supabase.from('company_orders').select('*', { count: 'exact', head: true }).eq('company_id', user.id)
+            ]);
 
             setStats({
-                available: stockCount || 0,
-                my_orders: orderCount || 0
+                available: stockCount.count || 0,
+                my_orders: orderCount.count || 0
             });
-        };
+        } finally {
+            setInitialLoad(false);
+        }
+    }, [user, router]);
+
+    useEffect(() => {
+        if (!user) return;
 
         checkRoleAndFetchStats();
 
@@ -49,14 +50,45 @@ export default function CompanyDashboard() {
             .subscribe();
 
         return () => { supabase.removeChannel(channel); };
-    }, [user, router]);
+    }, [user, checkRoleAndFetchStats]);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.push("/company/login");
     };
 
-    if (loading || !user) return <div>Loading...</div>;
+    if (loading || !user) return (
+        <div style={{ 
+            minHeight: '100vh', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            background: 'var(--bg-body)',
+            color: 'var(--text-main)',
+            fontSize: '1.2rem'
+        }}>
+            <div style={{ textAlign: 'center' }}>
+                <div style={{ marginBottom: '1rem', fontSize: '2rem' }}>🏢</div>
+                <div>Loading...</div>
+            </div>
+        </div>
+    );
+
+    if (initialLoad) return (
+        <div style={{ 
+            minHeight: '100vh', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            background: 'var(--bg-body)',
+            color: 'var(--text-main)'
+        }}>
+            <div style={{ textAlign: 'center' }}>
+                <div style={{ marginBottom: '1rem', fontSize: '2rem' }}>📈</div>
+                <div>Loading dashboard...</div>
+            </div>
+        </div>
+    );
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-body)', display: 'flex', flexDirection: 'column' }}>
