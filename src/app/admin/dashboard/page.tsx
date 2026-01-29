@@ -338,6 +338,7 @@ export default function AdminDashboard() {
                                     value={formData.role}
                                     onChange={e => setFormData({ ...formData, role: e.target.value })}
                                     style={{ background: '#0f172a', borderColor: '#334155', color: 'white' }}
+                                    aria-label="User role"
                                 >
                                     <option value="customer">Customer</option>
                                     <option value="company">Company (Partner)</option>

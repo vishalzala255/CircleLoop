@@ -94,8 +94,8 @@ export default function RequestPickup() {
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Type of Electronic Waste</label>
-                        <select value={wasteType} onChange={(e) => setWasteType(e.target.value)} required style={{ background: 'var(--bg-card)', color: 'var(--text-main)' }}>
+                        <label htmlFor="wasteType">Type of Electronic Waste</label>
+                        <select id="wasteType" value={wasteType} onChange={(e) => setWasteType(e.target.value)} required style={{ background: 'var(--bg-card)', color: 'var(--text-main)' }}>
                             <option value="">-- Select Type --</option>
                             <option value="Mobile/Tablet">Mobile/Tablet</option>
                             <option value="Laptop/Computer">Laptop/Computer</option>
@@ -129,8 +129,9 @@ export default function RequestPickup() {
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div className="form-group">
-                            <label>Pickup Date</label>
+                            <label htmlFor="pickupDate">Pickup Date</label>
                             <input
+                                id="pickupDate"
                                 type="date"
                                 value={pickupDate}
                                 onChange={(e) => setPickupDate(e.target.value)}
@@ -139,8 +140,9 @@ export default function RequestPickup() {
                             />
                         </div>
                         <div className="form-group">
-                            <label>Preferred Time</label>
+                            <label htmlFor="pickupTime">Preferred Time</label>
                             <select
+                                id="pickupTime"
                                 value={pickupTime}
                                 onChange={(e) => setPickupTime(e.target.value)}
                                 required
@@ -168,9 +170,9 @@ export default function RequestPickup() {
                     </div>
 
                     <div className="form-group">
-                        <label>Upload Photo (Optional)</label>
+                        <label htmlFor="photoUpload">Upload Photo (Optional)</label>
                         <div style={{ border: '2px dashed var(--border-color)', borderRadius: '10px', padding: '1.5rem', textAlign: 'center', background: 'var(--bg-body)' }}>
-                            <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)} style={{ width: 'auto', border: 'none', background: 'transparent' }} />
+                            <input id="photoUpload" type="file" accept="image/*" onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)} style={{ width: 'auto', border: 'none', background: 'transparent' }} />
                         </div>
                     </div>
 

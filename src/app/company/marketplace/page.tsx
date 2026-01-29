@@ -99,6 +99,20 @@ export default function PartnerMarketplace() {
                             display: 'flex', flexDirection: 'column', gap: '1rem'
                         }}>
                             <h3 style={{ fontSize: '1.2rem', color: 'var(--text-main)' }}>{item.item_name}</h3>
+                            {item.description && (
+                                <p style={{ 
+                                    fontSize: '0.85rem', 
+                                    color: 'var(--text-secondary)', 
+                                    lineHeight: 1.5,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical'
+                                }}>
+                                    {item.description}
+                                </p>
+                            )}
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                                 <div>
                                     <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Price per unit</div>

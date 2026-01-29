@@ -79,6 +79,7 @@ export default function AdminInventory() {
                     .from('inventory')
                     .insert({
                         item_name: item.ewaste_type || "Collected Item",
+                        description: item.description || null,
                         qty: Number(item.qty) || 1,
                         price_per_unit: 0,
                         source_request_id: Number(id)
@@ -240,13 +241,14 @@ export default function AdminInventory() {
                                     <tr style={{ background: 'var(--bg-section-alt)', borderBottom: '1px solid var(--border-color)' }}>
                                         <th style={thStyle}>Request ID</th>
                                         <th style={thStyle}>Item</th>
+                                        <th style={thStyle}>Description</th>
                                         <th style={thStyle}>User</th>
                                         <th style={thStyle}>Status</th>
                                         <th style={thStyle}>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {requests.length === 0 && <tr><td colSpan={5} style={{ padding: '3rem', textAlign: 'center' }}>No requests found.</td></tr>}
+                                    {requests.length === 0 && <tr><td colSpan={6} style={{ padding: '3rem', textAlign: 'center' }}>No requests found.</td></tr>}
                                     {requests.map(item => (
                                         <tr key={item.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                                             <td style={tdStyle}>
@@ -254,6 +256,11 @@ export default function AdminInventory() {
                                                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(item.created_at).toLocaleDateString()}</div>
                                             </td>
                                             <td style={tdStyle}>{item.ewaste_type} <br /><small>{item.qty} units</small></td>
+                                            <td style={{...tdStyle, maxWidth: '200px'}}>
+                                                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.description || 'N/A'}>
+                                                    {item.description || 'N/A'}
+                                                </div>
+                                            </td>
                                             <td style={tdStyle}>{item.profiles?.full_name}</td>
                                             <td style={tdStyle}>
                                                 <span style={{ padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 600, background: 'rgba(255,255,255,0.05)', color: 'var(--primary)' }}>{item.status}</span>
@@ -285,17 +292,17 @@ export default function AdminInventory() {
                             <h4 style={{ marginBottom: '1.5rem', color: 'var(--primary)' }}>Add Manual Item</h4>
                             <form onSubmit={handleManualAdd} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 <div>
-                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Item Name</label>
-                                    <input name="item_name" required placeholder="e.g. Fridge, TV, Laptop" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
+                                    <label htmlFor="item_name" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Item Name</label>
+                                    <input id="item_name" name="item_name" required placeholder="e.g. Fridge, TV, Laptop" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
                                 </div>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                     <div>
-                                        <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Quantity</label>
-                                        <input name="qty" type="number" required min="1" defaultValue="1" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
+                                        <label htmlFor="qty" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Quantity</label>
+                                        <input id="qty" name="qty" type="number" required min="1" defaultValue="1" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
                                     </div>
                                     <div>
-                                        <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Price (₹)</label>
-                                        <input name="price" type="number" required min="0" step="0.01" defaultValue="0" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
+                                        <label htmlFor="price" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Price (₹)</label>
+                                        <input id="price" name="price" type="number" required min="0" step="0.01" defaultValue="0" style={{ width: '100%', padding: '0.6rem', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }} />
                                     </div>
                                 </div>
                                 <button type="submit" disabled={submitting} className="btn btn-primary" style={{ marginTop: '1rem' }}>
@@ -312,6 +319,7 @@ export default function AdminInventory() {
                                         <tr style={{ background: 'var(--bg-section-alt)', borderBottom: '1px solid var(--border-color)' }}>
                                             <th style={thStyle}>No.</th>
                                             <th style={thStyle}>Item Name</th>
+                                            <th style={thStyle}>Description</th>
                                             <th style={thStyle}>Source</th>
                                             <th style={thStyle}>Qty</th>
                                             <th style={thStyle}>Price (₹)</th>
@@ -319,11 +327,16 @@ export default function AdminInventory() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {stock.length === 0 && <tr><td colSpan={6} style={{ padding: '2rem', textAlign: 'center' }}>No items in stock.</td></tr>}
+                                        {stock.length === 0 && <tr><td colSpan={7} style={{ padding: '2rem', textAlign: 'center' }}>No items in stock.</td></tr>}
                                         {stock.map((s, index) => (
                                             <tr key={s.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                                                 <td style={tdStyle}>{index + 1}</td>
                                                 <td style={tdStyle}><strong>{s.item_name}</strong></td>
+                                                <td style={{...tdStyle, maxWidth: '200px'}}>
+                                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={s.description || 'N/A'}>
+                                                        {s.description || 'N/A'}
+                                                    </div>
+                                                </td>
                                                 <td style={tdStyle}>
                                                     <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', background: s.source_request_id ? 'rgba(37, 99, 235, 0.1)' : 'rgba(156, 163, 175, 0.1)', color: s.source_request_id ? '#2563eb' : 'var(--text-secondary)' }}>
                                                         {s.source_request_id ? 'Auto' : 'Manual'}

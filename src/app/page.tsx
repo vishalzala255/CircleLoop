@@ -38,6 +38,26 @@ export default function Home() {
               </span>
             </div>
 
+            {/* Prominent E-Waste Management Title */}
+            <div className="animate-slide-up" style={{ 
+              animationDelay: '0.15s',
+              marginBottom: '1rem'
+            }}>
+              <h2 style={{
+                fontSize: 'clamp(1.5rem, 3.5vw, 2.2rem)',
+                fontWeight: 800,
+                color: 'var(--primary)',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}>
+                E-Waste Management
+              </h2>
+            </div>
+
             <h1 className="animate-slide-up" style={{
               fontSize: 'clamp(2.2rem, 5vw, 4.2rem)',
               lineHeight: 1.15,
@@ -87,8 +107,8 @@ export default function Home() {
             }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=987&auto=format&fit=crop"
-                alt="Recycling"
+                src="https://images.unsplash.com/photo-1572297794853-70f2e8ff5b7f?q=80&w=987&auto=format&fit=crop"
+                alt="E-Waste Recycling"
                 style={{ width: '100%', height: 'auto', display: 'block' }}
               />
 
@@ -137,12 +157,12 @@ export default function Home() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '5rem' }}>
             <ImpactCard
-              image="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&h=600&fit=crop"
+              image="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop"
               title="Green Jobs Creation"
               desc="Every 1,000 tons of electronics recycling creates 15 jobs and $110,000 in tax revenue."
             />
             <ImpactCard
-              image="https://images.unsplash.com/photo-1605600659908-0ef719419d41?w=800&h=600&fit=crop"
+              image="https://images.unsplash.com/photo-1595246140625-573b715d11dc?w=800&h=600&fit=crop"
               title="Resource Recovery"
               desc="There is 100 times more gold in a ton of e-waste than in a ton of gold ore."
             />
