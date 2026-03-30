@@ -1,0 +1,265 @@
+.container {
+  padding: 3rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.status {
+  font-size: 1rem;
+  color: #666;
+}
+
+.statusBadge {
+  background: #4CAF50;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.timeline {
+  position: relative;
+  margin: 3rem 0;
+}
+
+.timelineItem {
+  position: relative;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 2rem;
+}
+
+.timelineNode {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.timelineNode.completed {
+  background: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.timelineNode.active {
+  background: #667eea;
+  border-color: #667eea;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+}
+
+.nodeNumber {
+  color: #666;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.timelineNode.completed .nodeNumber,
+.timelineNode.active .nodeNumber {
+  color: white;
+}
+
+.timelineConnector {
+  position: absolute;
+  left: 29px;
+  top: 60px;
+  width: 2px;
+  height: 60px;
+  background: #ddd;
+  transition: background 0.3s ease;
+}
+
+.timelineConnector.completed {
+  background: #4CAF50;
+}
+
+.stageCard {
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.stageCard:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stageCard.activeCard {
+  border-color: #667eea;
+  background: #f8f9ff;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.stageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.stageHeader h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.activeBadge {
+  background: #667eea;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.completedBadge {
+  background: #4CAF50;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.stageDetails {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+  animation: expandDown 0.3s ease;
+}
+
+@keyframes expandDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+.description {
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+}
+
+.estimatedTime {
+  color: #667eea;
+  font-weight: 500;
+  margin: 0;
+}
+
+.stageTimeline {
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.stageTimeline p {
+  margin: 0.5rem 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.infoBox {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-left: 4px solid #667eea;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-top: 3rem;
+}
+
+.infoBox h4 {
+  color: #333;
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+}
+
+.infoBox p {
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+.infoBox ul {
+  list-style-position: inside;
+  margin: 0;
+}
+
+.infoBox li {
+  color: #666;
+  line-height: 1.8;
+  margin: 0.5rem 0;
+}
+
+.infoBox strong {
+  color: #333;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 2rem 1rem;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .timelineItem {
+    grid-template-columns: 50px 1fr;
+    gap: 1rem;
+  }
+
+  .timelineNode {
+    width: 50px;
+    height: 50px;
+  }
+
+  .timelineConnector {
+    left: 24px;
+  }
+
+  .stageCard {
+    padding: 1rem;
+  }
+
+  .stageHeader h3 {
+    font-size: 1rem;
+  }
+}

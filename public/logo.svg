@@ -1,0 +1,18 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hexagon Background -->
+  <path d="M50 5L89.5 27.5V72.5L50 95L10.5 72.5V27.5L50 5Z" stroke="#40916C" stroke-width="4" fill="transparent" />
+  
+  <!-- Stylized E / Recycle Loop -->
+  <path d="M70 35C70 35 65 25 50 25C35 25 25 35 25 50C25 65 35 75 50 75C60 75 66 70 70 65" stroke="#1B4332" stroke-width="6" stroke-linecap="round" />
+  
+  <!-- Arrow Head (Top) -->
+  <path d="M60 35L70 35L70 25" stroke="#1B4332" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Circuit Trace (Middle) -->
+  <path d="M35 50H65" stroke="#00B4D8" stroke-width="6" stroke-linecap="round" />
+  <circle cx="65" cy="50" r="4" fill="#00B4D8" />
+  
+  <!-- Circuit Node (Bottom) -->
+  <path d="M45 62H60" stroke="#00B4D8" stroke-width="4" stroke-linecap="round" />
+  <circle cx="60" cy="62" r="3" fill="#00B4D8" />
+</svg>
